@@ -1,6 +1,8 @@
-# Dependencies
+# Guide
 
-###
+## Global Dependencies
+
+### TypeScript
 
 ```sh
 npm install typescript -g
@@ -11,3 +13,5 @@ npm install typescript -g
 ```sh
 npm install pm2 -g
 ```
+
+## Commands
