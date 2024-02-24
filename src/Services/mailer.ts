@@ -1,6 +1,12 @@
 import nodemailer, { Transporter } from 'nodemailer';
 import { Signs } from '../Utils/constants';
 
+type EmailRequestPayload = {
+	to: string;
+	subject: string;
+	body: string;
+};
+
 export const sendEmail = ({ to, subject, body }: EmailRequestPayload) => {
 	var transporter: Transporter = nodemailer.createTransport({
 		host: process.env.MAILER_HOST,

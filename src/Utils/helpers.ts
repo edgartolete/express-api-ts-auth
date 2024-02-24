@@ -1,5 +1,6 @@
 import { client } from '../Connections/redis';
 import { sendEmail } from '../Services/mailer';
+import crypto from 'crypto';
 
 export async function sendVerificationCode(email: string) {
 	const randomCode: string = generateCode(6);
@@ -70,4 +71,8 @@ export async function tryCatchAsync<T>(callback: () => Promise<T>): Promise<[T |
 	} catch (error) {
 		return [null, error instanceof Error ? error : new Error(String(error))];
 	}
+}
+
+export function tokenCodeGenerator() {
+	return crypto.randomBytes(64).toString('hex');
 }

@@ -5,9 +5,11 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import fs from 'fs';
 import path from 'path';
-import { requestRateLimiter } from './Middlewares/rateLimit';
+import { requestRateLimiter } from './Middlewares/rateLimiterMiddleware';
 import dotenv from 'dotenv';
-import { errorResponse, notFound } from './Middlewares/errorHandler';
+import { errorResponse, notFound } from './Middlewares/errorHandlerMiddleware';
+import { apiKeyMiddleware } from './Middlewares/apiKeyMiddleware';
+import { tokenRouter } from './Routes/tokenRoute';
 
 dotenv.config();
 
@@ -28,7 +30,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(helmet()); //adds another layer of security
 
-app.use(requestRateLimiter);
+app.use(apiKeyMiddleware); //only allow request with API Key to make requests.
+
+app.use(requestRateLimiter); //limit the number of request per IP Address. Limit to 100 request per minute.
 
 app.use(express.json());
 
@@ -43,6 +47,9 @@ app.use(
 );
 
 /*##### ROUTES #####*/
+
+app.use('/token', tokenRouter);
+
 app.get('/', (req: Request, res: Response) => {
 	res.json({ message: 'API is working' });
 });
