@@ -1,5 +1,11 @@
 # Guide
 
+## Requirements
+
+-   install nodejs
+-   install redis
+-   install mysql
+
 ## Global Dependencies
 
 ### TypeScript

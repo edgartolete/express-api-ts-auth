@@ -3,3 +3,7 @@ type EmailRequestPayload = {
 	subject: string;
 	body: string;
 };
+
+export interface ErrorResponse extends Error {
+	status: number;
+}

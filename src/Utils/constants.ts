@@ -8,12 +8,8 @@ export enum ResponseTypes {
 	success = 'SUCCESS',
 	created = 'CREATED',
 	duplicate = 'DUPLICATE_FOUND',
-	found = 'FOUND',
 	notFound = 'NOT_FOUND',
-	incorrectPassword = 'INCORRECT_PASSWORD',
-	valid = 'VALID',
 	invalid = 'INVALID',
 	failed = 'FAILED',
-	unknown = 'UNKNOWN',
-	errorHashing = 'ERROR_HASHING'
+	unknown = 'UNKNOWN'
 }
