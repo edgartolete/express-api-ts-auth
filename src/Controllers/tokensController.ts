@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { ResponseTypes } from '../Utils/constants';
-import { JsonResponse, catchErrorResponse } from '../Utils/responseTemplate';
+import { JsonResponse } from '../Utils/responseTemplate';
 
 export const tokensController = {
 	refresh: (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
+			return;
 		} catch (err) {
-			catchErrorResponse(res, err);
+			JsonResponse.failed(res, err);
 		}
 	}
 };
