@@ -29,10 +29,10 @@ export function generateCode(length: number) {
 
 export function generateId(): number {
 	/**
-	 * Generate 17 digits string Id using random numbers and datetime
+	 * Generate 17 digits string Id using token random number plus current year, month, and milliseconds of the day
 	 */
 	const now: Date = new Date();
-	const year: string = now.getFullYear().toString();
+	const year: string = now.getFullYear().toString().padStart(4, '0');
 	const month: string = (now.getMonth() + 1).toString().padStart(2, '0');
 	const day: string = now.getDate().toString().padStart(2, '0');
 	const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
