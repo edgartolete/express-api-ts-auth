@@ -73,6 +73,6 @@ export async function tryCatchAsync<T>(callback: () => Promise<T>): Promise<[T |
 	}
 }
 
-export function tokenCodeGenerator() {
-	return crypto.randomBytes(64).toString('hex');
+export function keyGenerator(bytes: number = 64) {
+	return crypto.randomBytes(bytes).toString('hex');
 }
