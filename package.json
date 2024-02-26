@@ -4,10 +4,12 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "concurrently \"npx tsc -w\" \"nodemon --delay 500ms ./dist/index.js\"",
+		"dev": "concurrently \"npx tsc -w\" \"nodemon --delay 500ms ./dist/index.js\" 9001",
 		"stop": "concurrently \"./dist/Connections/stopConnections.js \" \"sudo pkill -f nodemon\"",
 		"build": "rimraf dist && npx tsc",
-		"start": "pm2 start ./dist/index.js",
+		"start": "pm2 start ./dist/index.js -i max",
+		"end": "pm2 stop all",
+		"restart": "pm2 reload ./dist/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
