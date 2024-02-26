@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { ResponseTypes } from '../Utils/constants';
+import { mode } from '../config';
 
 export function accessTokenMiddleware(req: Request, res: Response, next: NextFunction) {
+	if (mode['dev']) next();
 	if (req.headers.authorization == null) {
 		res.status(401).json({
 			result: ResponseTypes.invalid,

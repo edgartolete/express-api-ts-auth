@@ -32,7 +32,7 @@ app.use(helmet()); //adds another layer of security
 
 app.use(apiKeyMiddleware); //only allow request with API Key to make requests.
 
-app.use(requestRateLimiter); //limit the number of request per IP Address. Limit to 100 request per minute.
+app.use(requestRateLimiter); //limit the number of request per IP Address.
 
 app.use(express.json());
 

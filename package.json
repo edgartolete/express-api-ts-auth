@@ -1,5 +1,5 @@
 {
-	"name": "express-api-ts-starter-kit",
+	"name": "express-api-ts-auth",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
@@ -17,7 +17,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/edgartolete/express-api-ts-starter-kit"
+		"url": "https://github.com/edgartolete/express-api-ts-auth"
 	},
 	"dependencies": {
 		"@types/cors": "^2.8.17",
