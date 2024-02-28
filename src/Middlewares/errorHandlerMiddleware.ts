@@ -12,7 +12,7 @@ export function errorResponse(err: Error, req: Request, res: Response, next: Nex
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
 	const err = new Error(`Cannot find the URL path - ${req.originalUrl}`);
-	err.name = ResponseTypes.notFound;
+	err.name = ResponseTypes.invalidPath;
 	res.status(404);
 	next(err);
 }

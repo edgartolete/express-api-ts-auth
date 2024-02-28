@@ -11,5 +11,6 @@ export enum ResponseTypes {
 	notFound = 'NOT_FOUND',
 	invalid = 'INVALID',
 	failed = 'FAILED',
-	unknownError = 'UNKNOWN_ERROR'
+	unknownError = 'UNKNOWN_ERROR',
+	invalidPath = 'INVALID_PATH'
 }

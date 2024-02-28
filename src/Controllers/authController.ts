@@ -1,8 +1,13 @@
 import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 
-export const usersController = {
-	all: async (req: Request, res: Response) => {
+export const authController = {
+	signup: async (req: Request, res: Response) => {
+		console.log(req.params.app);
+		// if (req.params.app !== 'main') return res.json({ message: 'not admin' });
+		res.status(200).json({ success: true, app: req.params.app, token: req.query.token });
+	},
+	signin: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
 			return;
@@ -10,7 +15,7 @@ export const usersController = {
 			JsonResponse.failed(res, err);
 		}
 	},
-	find: async (req: Request, res: Response) => {
+	refresh: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
 			return;
@@ -18,7 +23,7 @@ export const usersController = {
 			JsonResponse.failed(res, err);
 		}
 	},
-	create: async (req: Request, res: Response) => {
+	logout: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
 			return;
@@ -26,15 +31,7 @@ export const usersController = {
 			JsonResponse.failed(res, err);
 		}
 	},
-	update: async (req: Request, res: Response) => {
-		try {
-			JsonResponse.success(res);
-			return;
-		} catch (err) {
-			JsonResponse.failed(res, err);
-		}
-	},
-	delete: async (req: Request, res: Response) => {
+	forgot: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
 			return;

@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
@@ -9,7 +9,14 @@ import { requestRateLimiter } from './Middlewares/rateLimiterMiddleware';
 import dotenv from 'dotenv';
 import { errorResponse, notFound } from './Middlewares/errorHandlerMiddleware';
 import { apiKeyMiddleware } from './Middlewares/apiKeyMiddleware';
-import { tokenRouter } from './Routes/tokenRoute';
+import { authRouter } from './Routes/authRoute';
+import { appCodeMiddleware } from './Middlewares/appCodeMiddleware';
+import { usersRouter } from './Routes/usersRoute';
+import { groupsRouter } from './Routes/groupsRoute';
+import { rolesRouter } from './Routes/rolesRoute';
+import { sysAdminRouter } from './Routes/sysAdminRoute';
+import { appsRouter } from './Routes/appsRoute';
+import { sysAdminTokenMiddleware } from './Middlewares/tokenMiddleware';
 
 dotenv.config();
 
@@ -30,29 +37,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(helmet()); //adds another layer of security
 
-app.use(apiKeyMiddleware); //only allow request with API Key to make requests.
+// app.use(apiKeyMiddleware); //only allow request with API Key to make requests.
 
-app.use(requestRateLimiter); //limit the number of request per IP Address.
+// app.use(requestRateLimiter); //limit the number of request per IP Address.
 
 app.use(express.json());
 
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'request.log'), { flags: 'a' });
-app.use(
-	morgan(
-		'DATE: :date, ADDRESS: :remote-addr, USER: :remote-user, METHOD: :method, URL: :url, HTTP VERSION: :http-version, STATUS: :status, RES CONTENT-LENGTH: :res[content-length], USER AGENT: :user-agent, RATE LIMIT: :res[RateLimit], RESPONSE TIME: :response-time ms, TOTAL TIME: :total-time ms',
-		{
-			stream: accessLogStream
-		}
-	)
-);
+// var accessLogStream = fs.createWriteStream(path.join(__dirname, 'request.log'), { flags: 'a' });
+// app.use(
+// 	morgan(
+// 		'DATE: :date, ADDRESS: :remote-addr, USER: :remote-user, METHOD: :method, URL: :url, HTTP VERSION: :http-version, STATUS: :status, RES CONTENT-LENGTH: :res[content-length], USER AGENT: :user-agent, RATE LIMIT: :res[RateLimit], RESPONSE TIME: :response-time ms, TOTAL TIME: :total-time ms',
+// 		{
+// 			stream: accessLogStream,
+// 			skip: function (req, res) {
+// 				return res.statusCode < 400;
+// 			}
+// 		}
+// 	)
+// );
 
 /*##### ROUTES #####*/
-
-app.use('/token', tokenRouter);
-
-app.get('/', (req: Request, res: Response) => {
-	res.json({ message: 'API is working' });
-});
+app.use('/', sysAdminRouter);
+app.use('/apps', sysAdminTokenMiddleware, appsRouter);
+app.use('/:app/*', appCodeMiddleware);
+app.use('/:app/auth', authRouter);
+app.use('/:app/users', usersRouter);
+app.use('/:app/groups', groupsRouter);
+app.use('/:app/roles', rolesRouter);
 
 /**#### HANDLING ERRORS ##### */
 app.all('*', notFound);

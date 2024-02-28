@@ -10,20 +10,20 @@ export const JsonResponse = {
 			content: 'No Content.'
 		});
 	},
-	success: (res: Response, val: any = 'No Content.', message: string | null = null) => {
+	success: (res: Response, content: any = 'No Content.', message: string | null = null) => {
 		res.status(200);
 		res.json({
 			result: ResponseTypes.success,
 			message: message ?? 'Request Successful',
-			content: val
+			content: content
 		});
 	},
-	nothingAffected: (res: Response, val: any = 'No content.') => {
+	nothingAffected: (res: Response, content: any = 'No content.') => {
 		res.status(200);
 		res.json({
 			result: ResponseTypes.failed,
 			message: 'Nothing was affected.',
-			content: val
+			content: content
 		});
 	},
 	failed: (res: Response, err: unknown) => {
@@ -36,7 +36,7 @@ export const JsonResponse = {
 			});
 		} else {
 			res.json({
-				result: ResponseTypes.unknownError,
+				result: ResponseTypes.failed,
 				message: 'Try Catch Error. Error not Instance of Error',
 				content: err
 			});

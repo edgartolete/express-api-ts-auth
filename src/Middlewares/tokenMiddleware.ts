@@ -2,6 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { ResponseTypes } from '../Utils/constants';
 import { mode } from '../config';
+import { redisClient } from '../Connections/redis';
+import { JsonResponse } from '../Utils/responseTemplate';
+import { tryCatchAsync } from '../Utils/helpers';
+import { secure } from '../Utils/secure';
 
 export function accessTokenMiddleware(req: Request, res: Response, next: NextFunction) {
 	if (mode['dev']) next();
@@ -57,4 +61,37 @@ export function isRefreshTokenValid(token: string) {
 	} catch (error) {
 		return false;
 	}
+}
+
+export async function sysAdminTokenMiddleware(req: Request, res: Response, next: NextFunction) {
+	const pbkdf = await redisClient.get('pbkdf');
+	const salt = await redisClient.get('salt');
+
+	console.log('key: ', req.headers.authorization);
+	console.log('salt: ', salt);
+	console.log('pbkdf: ', pbkdf);
+	if (req.headers.authorization == null || pbkdf === null || salt === null) {
+		res.status(401).json({
+			result: ResponseTypes.invalid,
+			message: 'Unauthorized request. Token invalid or expired'
+		});
+		return;
+	}
+
+	const [pbkdfResult, pbkdfError] = await tryCatchAsync(() =>
+		secure.generatePBKDF2Key(req.headers.authorization!, salt)
+	);
+	console.log('pbkdfResult: ', pbkdfResult);
+	if (pbkdfError != null || pbkdfResult == null) {
+		return JsonResponse.failed(res, pbkdfError);
+	}
+
+	if (pbkdfResult.key !== pbkdf) {
+		return JsonResponse.failed(res, 'Unauthorized request. Token invalid or expired');
+	}
+
+	redisClient.setEx('pbkdf', 300, pbkdf);
+	redisClient.setEx('salt', 300, salt);
+
+	next();
 }

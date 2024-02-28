@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 
-export const usersController = {
+export const appsController = {
 	all: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
@@ -27,6 +27,14 @@ export const usersController = {
 		}
 	},
 	update: async (req: Request, res: Response) => {
+		try {
+			JsonResponse.success(res);
+			return;
+		} catch (err) {
+			JsonResponse.failed(res, err);
+		}
+	},
+	regenerate: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
 			return;

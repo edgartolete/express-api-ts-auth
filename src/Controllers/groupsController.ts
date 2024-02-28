@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 
-export const usersController = {
+export const groupsController = {
 	all: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
