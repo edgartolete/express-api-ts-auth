@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import { sysAdminController } from '../Controllers/sysAdminController';
+import { sysAdminTokenMiddleware } from '../Middlewares/tokenMiddleware';
 
 const router: Router = express.Router({ mergeParams: true });
 
@@ -9,8 +10,10 @@ router.all('/', (req: Request, res: Response) => {
 
 router.post('/authenticate', sysAdminController.authenticate);
 
-router.post('/update-username', sysAdminController.updateUsername);
+router.post('/update-username', sysAdminTokenMiddleware, sysAdminController.updateUsername);
 
-router.post('/update-password', sysAdminController.updatePassword);
+router.post('/update-password', sysAdminTokenMiddleware, sysAdminController.updatePassword);
+
+router.post('/logout', sysAdminController.logout);
 
 export { router as sysAdminRouter };

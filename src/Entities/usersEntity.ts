@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, AfterLoad, ManyToOne, Unique } from 'typeorm';
+import { Entity, Column, OneToMany, AfterLoad, ManyToOne, Unique, Index } from 'typeorm';
 import { StatusBase } from './base/statusBase';
 import { Membership } from './membershipsEntity';
 import { App } from './appsEntity';
@@ -12,9 +12,11 @@ enum Gender {
 @Unique(['app', 'email'])
 export class User extends StatusBase {
 	@Column({ nullable: false })
+	@Index()
 	username: string;
 
 	@Column({ nullable: false })
+	@Index()
 	email: string;
 
 	@Column({ nullable: false })

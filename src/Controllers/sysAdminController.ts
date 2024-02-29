@@ -28,36 +28,36 @@ export const sysAdminController = {
 			return JsonResponse.failed(res, 'Username or Password is incorrect.');
 		}
 
-		const key = keyGenerator(64);
+		const hash = await secure.hash(username + password);
 
-		const salt = secure.salt();
+		const salt = secure.salt(64);
 
-		const [pbkdfResult, pbkdfError] = await tryCatchAsync(() => secure.generatePBKDF2Key(key, salt));
+		const [pbkdfResult, pbkdfError] = await tryCatchAsync(() => secure.generatePBKDF2Key(hash, salt));
 
 		if (pbkdfError != null || pbkdfResult == null) {
 			return JsonResponse.failed(res, pbkdfError);
 		}
 
-		console.log('key: ', key);
-		console.log('salt: ', salt);
-		console.log('pbkdf: ', pbkdfResult.key);
-
 		redisClient.setEx('pbkdf', 120, pbkdfResult.key);
-		redisClient.setEx('salt', 120, salt);
+		redisClient.setEx('hash', 120, hash);
 
 		return JsonResponse.success(res, {
-			token: key
+			token: salt
 		});
 	},
 	updateUsername: async (req: Request, res: Response) => {
 		return JsonResponse.success(res);
 	},
 	updatePassword: async (req: Request, res: Response) => {
-		try {
-			JsonResponse.success(res);
-			return;
-		} catch (err) {
-			JsonResponse.failed(res, err);
+		return JsonResponse.success(res);
+	},
+	logout: async (req: Request, res: Response) => {
+		const pbkdfDel = await redisClient.del('pbkdf');
+		const hashDel = await redisClient.del('hash');
+
+		if (pbkdfDel !== 1 && hashDel !== 1) {
+			return JsonResponse.nothingAffected(res, null, 'You are not logged-in.');
 		}
+		return JsonResponse.success(res, null, 'You are not successfully logged-out.');
 	}
 };

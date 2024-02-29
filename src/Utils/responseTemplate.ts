@@ -18,11 +18,11 @@ export const JsonResponse = {
 			content: content
 		});
 	},
-	nothingAffected: (res: Response, content: any = 'No content.') => {
+	nothingAffected: (res: Response, content: any = 'No content.', message: string | null = null) => {
 		res.status(200);
 		res.json({
 			result: ResponseTypes.failed,
-			message: 'Nothing was affected.',
+			message: message ?? 'Nothing was affected.',
 			content: content
 		});
 	},

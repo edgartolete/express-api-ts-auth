@@ -8,6 +8,9 @@ import { Role } from '../Entities/rolesEntity';
 import { Membership } from '../Entities/membershipsEntity';
 import { SysAdmin } from '../Entities/sysAdminEntity';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const dataSource = new DataSource({
 	type: 'mysql',
 	host: process.env.DB_HOST,

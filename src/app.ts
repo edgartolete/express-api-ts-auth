@@ -8,7 +8,6 @@ import path from 'path';
 import { requestRateLimiter } from './Middlewares/rateLimiterMiddleware';
 import dotenv from 'dotenv';
 import { errorResponse, notFound } from './Middlewares/errorHandlerMiddleware';
-import { apiKeyMiddleware } from './Middlewares/apiKeyMiddleware';
 import { authRouter } from './Routes/authRoute';
 import { appCodeMiddleware } from './Middlewares/appCodeMiddleware';
 import { usersRouter } from './Routes/usersRoute';
@@ -17,8 +16,11 @@ import { rolesRouter } from './Routes/rolesRoute';
 import { sysAdminRouter } from './Routes/sysAdminRoute';
 import { appsRouter } from './Routes/appsRoute';
 import { sysAdminTokenMiddleware } from './Middlewares/tokenMiddleware';
+import { startConnections } from './Connections/startConnections';
 
 dotenv.config();
+
+startConnections();
 
 const app: Express = express();
 

@@ -4,8 +4,8 @@ import crypto from 'crypto';
 type PBKDF = { key: string; salt: string };
 
 export const secure = {
-	salt: () => {
-		return crypto.randomBytes(16).toString('hex');
+	salt: (num: number) => {
+		return crypto.randomBytes(num).toString('hex');
 	},
 	hash: async (text: string) => {
 		return await bcrypt.hash(text, 10);

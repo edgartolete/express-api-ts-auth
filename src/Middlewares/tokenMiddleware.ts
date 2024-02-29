@@ -65,12 +65,9 @@ export function isRefreshTokenValid(token: string) {
 
 export async function sysAdminTokenMiddleware(req: Request, res: Response, next: NextFunction) {
 	const pbkdf = await redisClient.get('pbkdf');
-	const salt = await redisClient.get('salt');
+	const hash = await redisClient.get('hash');
 
-	console.log('key: ', req.headers.authorization);
-	console.log('salt: ', salt);
-	console.log('pbkdf: ', pbkdf);
-	if (req.headers.authorization == null || pbkdf === null || salt === null) {
+	if (req.headers.authorization == null || pbkdf === null || hash === null) {
 		res.status(401).json({
 			result: ResponseTypes.invalid,
 			message: 'Unauthorized request. Token invalid or expired'
@@ -79,19 +76,20 @@ export async function sysAdminTokenMiddleware(req: Request, res: Response, next:
 	}
 
 	const [pbkdfResult, pbkdfError] = await tryCatchAsync(() =>
-		secure.generatePBKDF2Key(req.headers.authorization!, salt)
+		secure.generatePBKDF2Key(hash, req.headers.authorization!)
 	);
-	console.log('pbkdfResult: ', pbkdfResult);
 	if (pbkdfError != null || pbkdfResult == null) {
 		return JsonResponse.failed(res, pbkdfError);
 	}
 
 	if (pbkdfResult.key !== pbkdf) {
+		console.log('ttl: pbkdf', await redisClient.ttl('pbkdf'));
+		console.log('ttl: hash', await redisClient.ttl('hash'));
 		return JsonResponse.failed(res, 'Unauthorized request. Token invalid or expired');
 	}
 
-	redisClient.setEx('pbkdf', 300, pbkdf);
-	redisClient.setEx('salt', 300, salt);
+	redisClient.setEx('pbkdf', 120, pbkdf);
+	redisClient.setEx('hash', 120, hash);
 
 	next();
 }

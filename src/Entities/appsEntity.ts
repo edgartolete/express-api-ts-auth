@@ -5,26 +5,27 @@ import { Role } from './rolesEntity';
 
 @Entity('apps')
 export class App extends BaseEntity {
-	@PrimaryColumn({ type: 'char', length: 12 })
+	@PrimaryColumn()
 	@Index()
 	code: string;
 
-	@Column({
-		nullable: false
-	})
+	@Column()
 	name: string;
 
-	@Column({ type: 'text' })
+	@Column({ type: 'text', nullable: true })
 	description: string;
 
 	@Column()
 	apiKey: string;
 
-	@Column()
+	@Column({ type: 'text' })
 	accessTokenSecret: string;
 
-	@Column()
+	@Column({ type: 'text' })
 	refreshTokenSecret: string;
+
+	@Column({ type: 'boolean', default: false })
+	twoFactorAuthEnabled: boolean;
 
 	@OneToMany(() => User, user => user.app)
 	users: User[];
