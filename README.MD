@@ -55,3 +55,7 @@ Keys you will need for the main application
 -   MAILER_PORT
 -   MAILER_EMAIL
 -   MAILER_PASS
+
+# Notes
+
+-   Database host for local environment sometimes 'localhost' or '127.0.0.1' depending on machine.
