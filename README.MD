@@ -29,7 +29,7 @@ npm install pm2 -g
 Keys you will need for the main application
 
 -   PORT: the port number of your api to run.
--   NODE_ENV: determine if the application is running on local or production.
+-   API_ENV: determine if the application is running on local or production.
 -   API_KEY: key to access the main application
 -   ENCRYPTION_KEY: key to encrypt data to all applications data
 -   TOKEN_SECRET: key to generate token for registering users.

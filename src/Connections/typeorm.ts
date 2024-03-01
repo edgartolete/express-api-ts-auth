@@ -13,6 +13,12 @@ dotenv.config();
 
 const { environment } = getRuntimeConfig();
 
+/**
+ * ### METHODS DO NOT USE IN PRODUCTION ###
+ * dropSchema - Set to true to drop schema if getting an issue, then turn back to false once done. Sometimes there will be an issue with Constraints like Foreign key which this will be useful.
+ * synchronize - Set to true to automatically sync database table changes.Use migrations instead.
+ */
+
 const localConnection = {
 	type: 'mysql',
 	host: process.env.LOCAL_DB_HOST,
@@ -52,11 +58,6 @@ const testConnection = {
 	migrations: []
 } as DataSourceOptions;
 
-/**
- * ### METHODS DO NOT USE IN PRODUCTION ###
- * dropSchema - Set to true to drop schema if getting an issue.
- * synchronize - Set to true to automatically sync database table changes.Use migrations instead.
- */
 const prodConnection = {
 	type: 'mysql',
 	host: process.env.PROD_DB_HOST,

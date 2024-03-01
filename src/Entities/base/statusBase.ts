@@ -27,9 +27,6 @@ export class StatusBase extends BaseEntity {
 	@CreateDateColumn()
 	createdAt: Date;
 
-	@UpdateDateColumn()
-	updatedAt: Date;
-
 	@DeleteDateColumn()
 	deactivatedAt: Date;
 }

@@ -2,6 +2,7 @@ import { Entity, Column, OneToMany, AfterLoad, ManyToOne, Unique, Index } from '
 import { StatusBase } from './base/statusBase';
 import { Membership } from './membershipsEntity';
 import { App } from './appsEntity';
+import { Role } from './rolesEntity';
 
 enum Gender {
 	Male = 'male',
@@ -63,6 +64,9 @@ export class User extends StatusBase {
 
 	@Column({ type: 'enum', enum: Gender })
 	gender: Gender;
+
+	@ManyToOne(() => Role, role => role.user)
+	role: Role;
 
 	@OneToMany(() => Membership, membership => membership.user)
 	membership: Membership[];
