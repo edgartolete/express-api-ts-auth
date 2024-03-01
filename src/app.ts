@@ -1,3 +1,4 @@
+import { Signs } from './Utils/constants';
 import express, { Express } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -17,6 +18,7 @@ import { sysAdminRouter } from './Routes/sysAdminRoute';
 import { appsRouter } from './Routes/appsRoute';
 import { sysAdminTokenMiddleware } from './Middlewares/tokenMiddleware';
 import { startConnections } from './Connections/startConnections';
+import { secure } from './Utils/secure';
 
 dotenv.config();
 
@@ -59,8 +61,9 @@ app.use(express.json());
 // );
 
 /*##### ROUTES #####*/
-app.use('/', sysAdminRouter);
-app.use('/apps', sysAdminTokenMiddleware, appsRouter);
+
+// app.use('/apps', sysAdminTokenMiddleware, appsRouter);
+app.use('/apps', appsRouter);
 app.use('/:app/*', appCodeMiddleware);
 app.use('/:app/auth', authRouter);
 app.use('/:app/users', usersRouter);
@@ -68,7 +71,13 @@ app.use('/:app/groups', groupsRouter);
 app.use('/:app/roles', rolesRouter);
 
 /**#### HANDLING ERRORS ##### */
-app.all('*', notFound);
 app.use(errorResponse); // should be used after other middleware and routes
+
+app.get('/', (req, res) => {
+	res.json({ message: 'API is working' });
+});
+app.use('/', sysAdminRouter);
+
+app.all('*', notFound);
 
 export default app;

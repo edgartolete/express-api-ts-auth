@@ -4,8 +4,8 @@ import { sysAdminTokenMiddleware } from '../Middlewares/tokenMiddleware';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.all('/', (req: Request, res: Response) => {
-	res.status(200).json({ message: 'API is running.' });
+router.all('/ping', (req: Request, res: Response) => {
+	res.status(200).json({ message: 'pong' });
 });
 
 router.post('/authenticate', sysAdminController.authenticate);

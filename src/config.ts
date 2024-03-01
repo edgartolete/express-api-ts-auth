@@ -3,3 +3,9 @@ export const mode = {
 	dev: process.env.NODE_ENV === 'development',
 	prod: process.env.NODE_ENV === 'production'
 };
+
+export function getRuntimeConfig() {
+	return {
+		environment: process.env.API_ENV as string
+	};
+}
