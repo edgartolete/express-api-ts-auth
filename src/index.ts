@@ -1,4 +1,5 @@
 import { Signs } from './Utils/constants';
+import { secure } from './Utils/secure';
 import app from './app';
 
 console.log('ENVIRONMENT:', process.env.API_ENV);

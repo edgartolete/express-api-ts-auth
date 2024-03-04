@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 import { secure } from '../Utils/secure';
-import { tryCatch } from '../Utils/helpers';
+import { fakeDelay, tryCatch } from '../Utils/helpers';
+import { Log } from '../Connections/mongoDB';
 
 export const authController = {
 	signup: async (req: Request, res: Response) => {
+		await fakeDelay(3000);
 		// if (req.params.app !== 'main') return res.json({ message: 'not admin' });
-		res.status(200).json({ success: true, app: req.params.app, token: req.query.token });
+		res.status(200).json({ success: true, app: req.params.app });
 
+		Log.request(req, res);
 		// search the database if the username or email is taken. do not make entry.
 
 		// do less work here if possible as registering users maybe bot. prioritize filtering the bot.
@@ -60,7 +63,13 @@ export const authController = {
 	},
 	refresh: async (req: Request, res: Response) => {
 		try {
+			const refreshTokenSecret = req.headers['refresh-token-secret'];
+
+			console.log('refresh token secret: ', refreshTokenSecret);
+
+			await fakeDelay(3000);
 			JsonResponse.success(res);
+
 			return;
 		} catch (err) {
 			JsonResponse.failed(res, err);

@@ -8,7 +8,15 @@ import { generateCode, keyGenerator, tryCatchAsync } from '../Utils/helpers';
 export const appsController = {
 	all: async (req: Request, res: Response) => {
 		try {
-			JsonResponse.success(res);
+			const xAccessToken = req.headers['x-access-token'];
+			console.log(xAccessToken);
+			const xRefreshToken = req.headers['x-refresh-token'];
+			console.log(xRefreshToken);
+			JsonResponse.success(res, {});
+			// JsonResponse.success(res, {
+			// 	xAccessToken: req.headers['x-access-token'],
+			// 	xRefreshToken: req.headers['x-refresh-token']
+			// });
 			return;
 		} catch (err) {
 			JsonResponse.failed(res, err);
@@ -32,7 +40,7 @@ export const appsController = {
 		const apiKey = keyGenerator(16);
 		const accessTokenSecret = keyGenerator(64);
 		const refreshTokenSecret = keyGenerator(64);
-		const encryptionKey = keyGenerator(16);
+		// const encryptionKey = keyGenerator(16);
 
 		const app: AppCreateType = {
 			code,
@@ -43,10 +51,10 @@ export const appsController = {
 			refreshTokenSecret: secure.encrypt(refreshTokenSecret, apiKey)
 		};
 
-		const [result, error] = await tryCatchAsync(() => appModel.create(app));
+		const [result, err] = await tryCatchAsync(() => appModel.create(app));
 
-		if (error != null || result == null) {
-			return JsonResponse.failed(res, error);
+		if (err != null || result == null) {
+			return JsonResponse.failed(res, err);
 		}
 
 		return JsonResponse.success(

@@ -7,8 +7,8 @@ import { Group } from '../Entities/groupsEntity';
 import { Role } from '../Entities/rolesEntity';
 import { Membership } from '../Entities/membershipsEntity';
 import { SysAdmin } from '../Entities/sysAdminEntity';
-import dotenv from 'dotenv';
 import { getRuntimeConfig } from '../config';
+import dotenv from 'dotenv';
 dotenv.config();
 
 const { environment } = getRuntimeConfig();

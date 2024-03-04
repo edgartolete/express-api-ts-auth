@@ -74,3 +74,5 @@ export class User extends StatusBase {
 	@ManyToOne(() => App, app => app.users)
 	app: App;
 }
+
+// TODO: Low priority. create another table to record activities of users like updating

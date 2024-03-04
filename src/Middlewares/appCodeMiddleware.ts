@@ -32,8 +32,8 @@ export async function appCodeMiddleware(req: Request, res: Response, next: NextF
 		return JsonResponse.failed(res, 'API Key is incorrect.');
 	}
 
-	req.headers['access-encrypted'] = result.accessTokenSecret;
-	req.headers['refresh-encrypted'] = result.refreshTokenSecret;
+	req.headers['access-token-secret'] = result.accessTokenSecret;
+	req.headers['refresh-token-secret'] = result.refreshTokenSecret;
 
 	next();
 }

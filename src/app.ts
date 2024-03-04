@@ -19,6 +19,7 @@ import { appsRouter } from './Routes/appsRoute';
 import { sysAdminTokenMiddleware } from './Middlewares/tokenMiddleware';
 import { startConnections } from './Connections/startConnections';
 import { secure } from './Utils/secure';
+import { Log } from './Connections/mongoDB';
 
 dotenv.config();
 
@@ -41,9 +42,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(helmet()); //adds another layer of security
 
+app.use(Log.start);
+
 // app.use(apiKeyMiddleware); //only allow request with API Key to make requests.
 
-// app.use(requestRateLimiter); //limit the number of request per IP Address.
+app.use(requestRateLimiter); //limit the number of request per IP Address.
 
 app.use(express.json());
 
@@ -64,11 +67,11 @@ app.use(express.json());
 
 // app.use('/apps', sysAdminTokenMiddleware, appsRouter);
 app.use('/apps', appsRouter);
-app.use('/:app/*', appCodeMiddleware);
 app.use('/:app/auth', authRouter);
-app.use('/:app/users', usersRouter);
+app.use('/:app/users', appCodeMiddleware, usersRouter);
 app.use('/:app/groups', groupsRouter);
 app.use('/:app/roles', rolesRouter);
+app.use('/:app/*', appCodeMiddleware, notFound);
 
 /**#### HANDLING ERRORS ##### */
 app.use(errorResponse); // should be used after other middleware and routes
