@@ -3,7 +3,7 @@ import { groupsController } from '../Controllers/groupsController';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.get('/find/', groupsController.all);
+router.get('/find/', groupsController.find);
 
 router.post('/create/', groupsController.update);
 

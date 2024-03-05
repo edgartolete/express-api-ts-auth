@@ -13,7 +13,7 @@ router.post('/signin', authController.signin);
 
 router.post('/refresh', authController.refresh);
 
-router.post('/logout', accessTokenMiddleware, authController.logout);
+router.post('/logout', authController.logout);
 
 router.post('/forgot', authController.forgot);
 

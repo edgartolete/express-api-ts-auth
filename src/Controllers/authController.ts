@@ -119,15 +119,11 @@ export const authController = {
 		// TODO:  this should be dynamic based on app if they want to enable.
 	},
 	refresh: async (req: Request, res: Response) => {
+		const { refreshToken = null } = req.body;
+
 		const apiKey = req.headers['x-api-key'] as string;
 		const accessTokenSecret = (req.headers['access-token-secret'] as string) ?? '';
 		const refreshTokenSecret = (req.headers['refresh-token-secret'] as string) ?? '';
-
-		const { refreshToken = null } = req.body;
-
-		if (refreshToken == null) {
-			return JsonResponse.incompleteData(res, null, 'Required refreshToken in body.');
-		}
 
 		const [das, dasErr] = tryCatch(() => secure.decrypt(accessTokenSecret, apiKey));
 		if (dasErr !== null) return JsonResponse.error(res, dasErr);
@@ -136,6 +132,10 @@ export const authController = {
 		const [drs, drsErr] = tryCatch(() => secure.decrypt(refreshTokenSecret, apiKey));
 		if (drsErr !== null) return JsonResponse.error(res, drsErr);
 		if (drs == null) return JsonResponse.failed1(res, null, 'Refresh Token Secret Decrypt Failed.');
+
+		if (refreshToken == null) {
+			return JsonResponse.incompleteData(res, null, 'Required refreshToken in body.');
+		}
 
 		type RefreshTokenType = {
 			id: string;
@@ -166,23 +166,33 @@ export const authController = {
 		return JsonResponse.success(res, { accessToken }, 'Refresh Token Success');
 	},
 	logout: async (req: Request, res: Response) => {
-		const id = parseInt(req.headers['user-id']?.toString() as string);
-
-		if (id === undefined) {
-			return JsonResponse.failed1(res, null, 'Required user-id');
+		const accessToken = req.headers.authorization;
+		if (accessToken === undefined) {
+			return JsonResponse.unauthorized(res, 'Required authorization.');
 		}
 
-		const { app: appCode } = req.params;
-		const user: UserFindType = { id, app: { code: appCode } };
+		const apiKey = req.headers['x-api-key'] as string;
+		const accessTokenSecret = (req.headers['access-token-secret'] as string) ?? '';
+		const refreshTokenSecret = (req.headers['refresh-token-secret'] as string) ?? '';
 
-		const [result, findErr] = await tryCatchAsync(() => userModel.find(user));
+		const [das, dasErr] = tryCatch(() => secure.decrypt(accessTokenSecret, apiKey));
+		if (dasErr !== null) return JsonResponse.error(res, dasErr);
+		if (das == null) return JsonResponse.failed1(res, null, 'Access Token Secret Decrypt Failed.');
 
-		if (findErr !== null) {
-			return JsonResponse.error(res, findErr);
-		}
+		const [drs, drsErr] = tryCatch(() => secure.decrypt(refreshTokenSecret, apiKey));
+		if (drsErr !== null) return JsonResponse.error(res, drsErr);
+		if (drs == null) return JsonResponse.failed1(res, null, 'Refresh Token Secret Decrypt Failed.');
 
-		if (result === null) {
-			return JsonResponse.failed1(res, null, 'User Not found');
+		const [dt, dtErr] = tryCatch(() => jwt.verify(accessToken, das as Secret));
+
+		if (dtErr !== null || dt == null) return JsonResponse.unauthorized(res, 'Token expired. Signin again.');
+
+		const { id } = dt as JwtPayload;
+
+		const redisAccessToken = await redisClient.get(`${id}-access-token`);
+
+		if (redisAccessToken == null) {
+			return JsonResponse.unauthorized(res, 'Token invalid. Signin again.');
 		}
 
 		const [redisAt, redisRt] = await Promise.all([
