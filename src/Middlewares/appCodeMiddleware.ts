@@ -4,6 +4,9 @@ import { JsonResponse } from '../Utils/responseTemplate';
 import { App } from '../Entities/appsEntity';
 import { secure } from '../Utils/secure';
 
+/**
+ *  This middleware checks for param :app and x-api-key. Validate that application is valid.
+ */
 export async function appCodeMiddleware(req: Request, res: Response, next: NextFunction) {
 	const { app: appCode = null } = req.params;
 	const apiKey = req.headers['x-api-key'];

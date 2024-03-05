@@ -1,25 +1,14 @@
 import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 import { secure } from '../Utils/secure';
-import { fakeDelay, generateAccessToken, generateId, tryCatch, tryCatchAsync } from '../Utils/helpers';
-import { Log } from '../Connections/mongoDB';
-import { getRuntimeConfig } from '../config';
+import { generateId, tryCatch, tryCatchAsync } from '../Utils/helpers';
 import { UserCreateType, UserFindType, userModel } from '../Models/usersModel';
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import { redisClient } from '../Connections/redis';
 
-const { encryptionKey } = getRuntimeConfig();
-
 export const authController = {
 	signup: async (req: Request, res: Response) => {
-		const {
-			username = null,
-			email = null,
-			password = null,
-			firstName = null,
-			middleName = null,
-			lastName = null
-		} = req.body;
+		const { username = null, email = null, password = null } = req.body;
 
 		if (username == null || email == null || password == null) {
 			return JsonResponse.incompleteData(res, 'Required username, email, password');
@@ -76,6 +65,10 @@ export const authController = {
 			return JsonResponse.success(res, result, 'User not found');
 		}
 
+		if (!result.isActive) {
+			return JsonResponse.unauthorized(res, 'account is deactivated.');
+		}
+
 		const [found, passErr] = await tryCatchAsync(() => secure.compare(password, result.password));
 
 		if (passErr !== null) {
@@ -123,7 +116,7 @@ export const authController = {
 		});
 	},
 	twoFactorAuthentication: async () => {
-		// this should be dynamic based on app if they want to enable.
+		// TODO:  this should be dynamic based on app if they want to enable.
 	},
 	refresh: async (req: Request, res: Response) => {
 		const apiKey = req.headers['x-api-key'] as string;
@@ -151,11 +144,18 @@ export const authController = {
 			iat: Date;
 			exp: Date;
 		};
+
 		const [dt, dtErr] = tryCatch(() => jwt.verify(refreshToken, drs as Secret));
 
 		if (dtErr !== null) return JsonResponse.error(res, dtErr);
 
 		const { iat, exp, ...rest } = dt as JwtPayload;
+
+		const redisRefreshToken = await redisClient.get(`${rest.id}-refresh-token`);
+
+		if (redisRefreshToken == null) {
+			return JsonResponse.unauthorized(res, 'Cannot refresh the token as you are already logged-out');
+		}
 
 		const [accessToken, atErr] = tryCatch(() => {
 			return jwt.sign(rest, das, { expiresIn: '10m' });
@@ -197,6 +197,6 @@ export const authController = {
 		return JsonResponse.success(res, null, 'You are now successfully logged-out');
 	},
 	forgot: async (req: Request, res: Response) => {
-		//
+		// TODO: return the user security questions and if answer is correct. generate new password and store.
 	}
 };

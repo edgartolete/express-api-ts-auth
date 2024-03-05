@@ -9,6 +9,7 @@ export enum ResponseTypes {
 	duplicate = 'DUPLICATE_FOUND',
 	notFound = 'NOT_FOUND',
 	invalid = 'INVALID',
+	unauthorized = 'UNAUTHORIZED',
 	failed = 'FAILED',
 	error = 'ERROR',
 	unknownError = 'UNKNOWN_ERROR',

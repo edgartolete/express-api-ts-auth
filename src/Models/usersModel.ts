@@ -15,6 +15,7 @@ export type UserFindType = {
 	username?: string;
 	email?: string;
 	password?: string;
+	isActive?: boolean;
 };
 
 export const userModel = {

@@ -1,66 +1,40 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
 import { ResponseTypes } from '../Utils/constants';
 import { mode } from '../config';
 import { redisClient } from '../Connections/redis';
 import { JsonResponse } from '../Utils/responseTemplate';
-import { tryCatchAsync } from '../Utils/helpers';
+import { tryCatch, tryCatchAsync } from '../Utils/helpers';
 import { secure } from '../Utils/secure';
 
-export function accessTokenMiddleware(req: Request, res: Response, next: NextFunction) {
-	if (mode['dev']) next();
-	if (req.headers.authorization == null) {
-		res.status(401).json({
-			result: ResponseTypes.invalid,
-			message: 'Unauthorized request. No provided Access Token'
-		});
-		return;
+export async function accessTokenMiddleware(req: Request, res: Response, next: NextFunction) {
+	const apiKey = req.headers['x-api-key'] as string;
+	const accessTokenSecret = (req.headers['access-token-secret'] as string) ?? '';
+
+	const accessToken = req.headers.authorization;
+	if (accessToken === undefined) {
+		return JsonResponse.unauthorized(res, 'Required authorization.');
 	}
 
-	if (isAccessTokenValid(`"${req.headers.authorization}"`)) {
-		res.status(401).json({
-			result: ResponseTypes.invalid,
-			message: 'Unauthorized request. Provided Access Token is invalid or expired'
-		});
-		return;
+	const [das, dasErr] = tryCatch(() => secure.decrypt(accessTokenSecret, apiKey));
+	if (dasErr !== null) return JsonResponse.error(res, dasErr);
+	if (das == null) return JsonResponse.failed1(res, null, 'Access Token Secret Decrypt Failed.');
+
+	const [dt, dtErr] = tryCatch(() => jwt.verify(accessToken, das as Secret));
+
+	if (dtErr !== null || dt == null) return JsonResponse.unauthorized(res, 'Token expired. Signin again.');
+
+	const { id } = dt as JwtPayload;
+
+	const redisAccessToken = await redisClient.get(`${id}-access-token`);
+
+	if (redisAccessToken == null) {
+		return JsonResponse.unauthorized(res, 'Token invalid. Signin again.');
 	}
+
+	req.headers['user-id'] = id;
+
 	next();
-}
-
-export function generateAccessToken(id: number): string {
-	const payload = { id };
-	const secret: Secret = `${process.env.ACCESS_TOKEN_SECRET}`;
-	const options: SignOptions = { expiresIn: '10m' };
-	const token: string = jwt.sign(payload, secret, options);
-	return token;
-}
-
-export function generateRefreshToken(id: number): string {
-	const payload = { id };
-	const secret: Secret = `${process.env.REFRESH_TOKEN_SECRET}`;
-	const options: SignOptions = { expiresIn: '30d' };
-	const token: string = jwt.sign(payload, secret, options);
-	return token;
-}
-
-export function isAccessTokenValid(token: string) {
-	const secretKey: Secret = `${process.env.ACCESS_TOKEN_SECRET}`;
-	try {
-		const decodedToken = jwt.verify(token, secretKey);
-		return true;
-	} catch (error) {
-		return false;
-	}
-}
-
-export function isRefreshTokenValid(token: string) {
-	const secretKey: Secret = `${process.env.REFRESH_TOKEN_SECRET}`;
-	try {
-		const decodedToken = jwt.verify(token, secretKey);
-		return true;
-	} catch (error) {
-		return false;
-	}
 }
 
 export async function sysAdminTokenMiddleware(req: Request, res: Response, next: NextFunction) {

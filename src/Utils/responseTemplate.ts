@@ -26,6 +26,14 @@ export const JsonResponse = {
 			content: content ?? 'No Content.'
 		});
 	},
+	unauthorized: (res: Response, message: string = '', content: any = null) => {
+		res.status(401);
+		res.json({
+			result: ResponseTypes.unauthorized,
+			message,
+			content: content ?? 'Request was rejected because required credentials are not provided or invalid.'
+		});
+	},
 	failed: (res: Response, err: unknown) => {
 		res.status(200);
 		if (err instanceof Error) {
@@ -42,6 +50,7 @@ export const JsonResponse = {
 			});
 		}
 	},
+
 	failed1: (res: Response, content: any = 'No content.', message: string = 'No Message') => {
 		res.status(200);
 		res.json({
@@ -67,3 +76,5 @@ export const JsonResponse = {
 		}
 	}
 };
+
+// TODO: fix the JsonResponse format. arrange by result, message, content. also fix the response codes.

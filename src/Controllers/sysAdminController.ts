@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 import { sysAdminModel } from '../Models/sysAdminModel';
 import { secure } from '../Utils/secure';
-import { generateAccessToken, keyGenerator, tryCatchAsync } from '../Utils/helpers';
+import { tryCatchAsync } from '../Utils/helpers';
 import { redisClient } from '../Connections/redis';
 
 export const sysAdminController = {
