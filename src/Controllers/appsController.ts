@@ -141,7 +141,7 @@ export const appsController = {
 		}
 
 		if (result?.affected == 0) {
-			return JsonResponse.nothingAffected(res, res, 'Delete failed. ');
+			return JsonResponse.nothingAffected(res, result, 'Delete failed. ');
 		}
 
 		return JsonResponse.success(res, result);

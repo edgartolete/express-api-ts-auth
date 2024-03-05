@@ -7,6 +7,7 @@ export const mode = {
 export function getRuntimeConfig() {
 	return {
 		environment: process.env.API_ENV as string,
-		apiKey: process.env.API_KEY as string
+		apiKey: process.env.API_KEY as string,
+		encryptionKey: process.env.ENCRYPTION_KEY as string
 	};
 }

@@ -1,30 +1,52 @@
 import { Request, Response } from 'express';
 import { JsonResponse } from '../Utils/responseTemplate';
 import { secure } from '../Utils/secure';
-import { fakeDelay, tryCatch } from '../Utils/helpers';
+import { fakeDelay, generateId, tryCatch, tryCatchAsync } from '../Utils/helpers';
 import { Log } from '../Connections/mongoDB';
+import { getRuntimeConfig } from '../config';
+import { UserCreateType, userModel } from '../Models/usersModel';
+
+const { encryptionKey } = getRuntimeConfig();
 
 export const authController = {
 	signup: async (req: Request, res: Response) => {
-		await fakeDelay(3000);
-		// if (req.params.app !== 'main') return res.json({ message: 'not admin' });
-		res.status(200).json({ success: true, app: req.params.app });
+		const {
+			username = null,
+			email = null,
+			password = null,
+			firstName = null,
+			middleName = null,
+			lastName = null
+		} = req.body;
 
-		// Log.request(req, res);
-		// search the database if the username or email is taken. do not make entry.
+		if (username == null || email == null || password == null) {
+			return JsonResponse.incompleteData(res, 'Required username, email, password');
+		}
 
-		// do less work here if possible as registering users maybe bot. prioritize filtering the bot.
+		const { app: appCode } = req.params;
 
-		// generate a jwt token containing the  username, email, and hashed password then end the token to the user email.
+		const user: UserCreateType = {
+			app: { code: appCode },
+			id: generateId(),
+			username,
+			email,
+			password: await secure.hash(password)
+		};
 
-		// token secret is not access or refresh token, they will comes from global environment variable
+		const [result, err] = await tryCatchAsync(() => userModel.create(user));
+
+		if (err !== null) {
+			return JsonResponse.failed(res, err);
+		}
+
+		return JsonResponse.success(res, result, 'Successfully added.');
 	},
 	verify: async (req: Request, res: Response) => {
 		//after the user signup, they need to verify their email address to make sure they are human.
 		// receive the token that contains the the username email and password.
 	},
 	signin: async (req: Request, res: Response) => {
-		const { username = null, password = null } = req.body;
+		const { username = null, email = null, password = null } = req.body;
 
 		if (username == null || password == null) {
 			return JsonResponse.incompleteData(res);
@@ -64,8 +86,6 @@ export const authController = {
 	refresh: async (req: Request, res: Response) => {
 		try {
 			const refreshTokenSecret = req.headers['refresh-token-secret'];
-
-			console.log('refresh token secret: ', refreshTokenSecret);
 
 			await fakeDelay(3000);
 			JsonResponse.success(res);

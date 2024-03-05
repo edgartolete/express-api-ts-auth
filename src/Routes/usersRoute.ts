@@ -6,15 +6,13 @@ import { JsonResponse } from '../Utils/responseTemplate';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.get('/', usersController.all);
+router.get('/find', usersController.all);
 
-router.get('/:id', usersController.find);
+router.post('/create', usersController.create);
 
-router.patch('/create', usersController.create);
+router.patch('/update/', usersController.update);
 
-router.patch('/update/:id', usersController.update);
-
-router.delete('/delete/:id', usersController.update);
+router.delete('/delete/', usersController.update);
 
 router.all('/*', (req, res) => {
 	return res.json({ message: 'invalid route' });

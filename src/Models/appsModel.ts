@@ -48,5 +48,10 @@ export const appModel = {
 	},
 	delete: async (id: number) => {
 		return await App.delete({ id });
+		// const result = await App.findBy({ id });
+
+		// if (result.length == 0) return result;
+
+		// return await dataSource.createQueryBuilder().delete().from(App).where('id = :id', { id }).execute();
 	}
 };

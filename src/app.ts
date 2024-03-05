@@ -68,7 +68,7 @@ app.use(express.json());
 
 // app.use('/apps', sysAdminTokenMiddleware, appsRouter);
 app.use('/apps', sysAdminTokenMiddleware, appsRouter);
-app.use('/:app/auth', authRouter);
+app.use('/:app/auth', appCodeMiddleware, authRouter);
 app.use('/:app/users', appCodeMiddleware, usersRouter);
 app.use('/:app/groups', groupsRouter);
 app.use('/:app/roles', rolesRouter);

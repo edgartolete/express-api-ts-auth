@@ -3,14 +3,12 @@ import { groupsController } from '../Controllers/groupsController';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.get('/', groupsController.all);
+router.get('/find/', groupsController.all);
 
-router.get('/:id', groupsController.find);
+router.post('/create/', groupsController.update);
 
-router.patch('/create', groupsController.update);
+router.patch('/update/', groupsController.update);
 
-router.patch('/update/:id', groupsController.update);
-
-router.delete('/delete/:id', groupsController.delete);
+router.delete('/delete/', groupsController.delete);
 
 export { router as groupsRouter };

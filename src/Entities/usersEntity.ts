@@ -13,23 +13,21 @@ enum Gender {
 @Unique(['app', 'email'])
 export class User extends StatusBase {
 	@Column({ nullable: false })
-	@Index()
 	username: string;
 
 	@Column({ nullable: false })
-	@Index()
 	email: string;
 
 	@Column({ nullable: false })
 	password: string;
 
-	@Column()
+	@Column({ nullable: true })
 	firstName: string;
 
-	@Column()
+	@Column({ nullable: true })
 	lastName: string;
 
-	@Column()
+	@Column({ nullable: true })
 	middleName: string;
 
 	fullName: string;
@@ -38,31 +36,31 @@ export class User extends StatusBase {
 		this.fullName = `${this.firstName} ${this.middleName + ' '}${this.lastName}`;
 	}
 
-	@Column()
+	@Column({ nullable: true })
 	recovery1Q: string;
 
-	@Column()
+	@Column({ nullable: true })
 	recovery1A: string;
 
-	@Column()
+	@Column({ nullable: true })
 	recovery2Q: string;
 
-	@Column()
+	@Column({ nullable: true })
 	recovery2A: string;
 
-	@Column()
+	@Column({ nullable: true })
 	recovery3Q: string;
 
-	@Column()
+	@Column({ nullable: true })
 	recovery3A: string;
 
-	@Column()
+	@Column({ nullable: true })
 	photo: string;
 
-	@Column({ type: 'date' })
+	@Column({ type: 'date', nullable: true })
 	birthday: string;
 
-	@Column({ type: 'enum', enum: Gender })
+	@Column({ type: 'enum', enum: Gender, nullable: true })
 	gender: Gender;
 
 	@ManyToOne(() => Role, role => role.user)

@@ -8,7 +8,7 @@ import { appsController } from '../Controllers/appsController';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.get('/', appsController.find);
+router.get('/find/', appsController.find);
 
 router.post('/create/', appsController.create);
 

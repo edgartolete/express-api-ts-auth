@@ -3,14 +3,12 @@ import { rolesController } from '../Controllers/rolesController';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.get('/', rolesController.all);
+router.get('/find', rolesController.all);
 
-router.get('/:id', rolesController.find);
+router.post('/create', rolesController.create);
 
-router.patch('/create', rolesController.create);
+router.patch('/update/', rolesController.update);
 
-router.patch('/update/:id', rolesController.update);
-
-router.delete('/delete/:id', rolesController.delete);
+router.delete('/delete/', rolesController.delete);
 
 export { router as rolesRouter };
