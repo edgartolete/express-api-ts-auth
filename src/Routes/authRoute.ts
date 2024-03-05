@@ -15,7 +15,11 @@ router.post('/refresh', authController.refresh);
 
 router.post('/logout', authController.logout);
 
-router.post('/forgot', authController.forgot);
+router.post('/forgot-request', authController.forgotRequest);
+
+router.post('/forgot-verify', authController.forgotVerify);
+
+router.post('/forgot-approved', authController.forgotApproved);
 
 router.all('/*', (req, res) => {
 	return res.json({ message: 'Invalid route' });

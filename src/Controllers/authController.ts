@@ -5,6 +5,7 @@ import { generateId, tryCatch, tryCatchAsync } from '../Utils/helpers';
 import { UserCreateType, UserFindType, userModel } from '../Models/usersModel';
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import { redisClient } from '../Connections/redis';
+import { emit } from 'process';
 
 export const authController = {
 	signup: async (req: Request, res: Response) => {
@@ -43,8 +44,8 @@ export const authController = {
 
 		const { username = null, email = null, password = null } = req.body;
 
-		if (username == null || password == null) {
-			return JsonResponse.incompleteData(res);
+		if ((username == null && email == null) || password == null) {
+			return JsonResponse.incompleteData(res, null, 'Required username or email and email');
 		}
 
 		const { app: appCode } = req.params;
@@ -206,7 +207,62 @@ export const authController = {
 
 		return JsonResponse.success(res, null, 'You are now successfully logged-out');
 	},
-	forgot: async (req: Request, res: Response) => {
+	updateAccountDetails: async (req: Request, res: Response) => {
+		//TODO: update details like firstname, birthday, photo, etc.
+	},
+	setSecurityQuestions: async (req: Request, res: Response) => {
+		// TODO: update security questions.
+	},
+	forgotRequest: async (req: Request, res: Response) => {
 		// TODO: return the user security questions and if answer is correct. generate new password and store.
+		const { app: appCode } = req.params;
+		const { username = null, email = null } = req.body;
+
+		if (username == null && email == null) {
+			return JsonResponse.incompleteData(res, null, 'Required username or email');
+		}
+
+		const user: UserFindType = { app: { code: appCode } };
+
+		if (username !== null) user.username = username;
+
+		if (email !== null) user.email = email;
+
+		const [result, findErr] = await tryCatchAsync(() => userModel.find(user));
+
+		if (findErr !== null) {
+			return JsonResponse.error(res, findErr);
+		}
+
+		if (result == null) {
+			return JsonResponse.failed1(res, null, 'User not found.');
+		}
+
+		const { recoveryQuestion1, recoveryQuestion2, recoveryQuestion3 } = result;
+
+		return JsonResponse.success(
+			res,
+			[
+				{
+					recoveryQuestion1,
+					recoveryAnswer1: ''
+				},
+				{
+					recoveryQuestion2,
+					recoveryAnswer2: ''
+				},
+				{
+					recoveryQuestion3,
+					recoveryAnswer3: ''
+				}
+			],
+			'Respond back with the empty recoveryAnswers filled-up as a request body. Please note that answers are case and space sensitive.'
+		);
+	},
+	forgotVerify: async (req: Request, res: Response) => {
+		return JsonResponse.success(res);
+	},
+	forgotApproved: async (req: Request, res: Response) => {
+		return JsonResponse.success(res);
 	}
 };

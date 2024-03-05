@@ -37,22 +37,22 @@ export class User extends StatusBase {
 	}
 
 	@Column({ nullable: true })
-	recovery1Q: string;
+	recoveryQuestion1: string;
 
 	@Column({ nullable: true })
-	recovery1A: string;
+	recoveryAnswer1: string;
 
 	@Column({ nullable: true })
-	recovery2Q: string;
+	recoveryQuestion2: string;
 
 	@Column({ nullable: true })
-	recovery2A: string;
+	recoveryAnswer2: string;
 
 	@Column({ nullable: true })
-	recovery3Q: string;
+	recoveryQuestion3: string;
 
 	@Column({ nullable: true })
-	recovery3A: string;
+	recoveryAnswer3: string;
 
 	@Column({ nullable: true })
 	photo: string;
