@@ -6,9 +6,9 @@ import { getRuntimeConfig } from '../config';
 const { apiKey } = getRuntimeConfig();
 
 export async function apiKeyMiddleware(req: Request, res: Response, next: NextFunction) {
-	const xApiKey = (req.headers['x-api-key'] as string) || '';
+	const xApiKey = req.headers['x-api-key'] as string;
 
-	if (apiKey === undefined) {
+	if (xApiKey === undefined) {
 		return JsonResponse.failed(res, 'No API Key provided.');
 	}
 

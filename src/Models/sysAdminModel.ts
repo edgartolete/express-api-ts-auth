@@ -5,7 +5,10 @@ export const sysAdminModel = {
 	get: async () => {
 		return await dataSource.createQueryBuilder().select().from(SysAdmin, 'sysadmin').execute();
 	},
-	updateUserName: async(username: string) => {
-		return await dataSource.createQueryBuilder().update({username})
+	updateUserName: async (userId: number, username: string) => {
+		return await SysAdmin.update({ id: userId }, { username });
+	},
+	updatePassword: async (userId: number, password: string) => {
+		return await SysAdmin.update({ id: userId }, { password });
 	}
 };

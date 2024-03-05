@@ -64,10 +64,21 @@ export function isRefreshTokenValid(token: string) {
 }
 
 export async function sysAdminTokenMiddleware(req: Request, res: Response, next: NextFunction) {
-	const pbkdf = await redisClient.get('pbkdf');
-	const hash = await redisClient.get('hash');
+	const userId = req.headers['user-id'] || '';
+	const token = req.headers['authorization'] || '';
 
-	if (req.headers.authorization == null || pbkdf === null || hash === null) {
+	if (userId === '') {
+		return JsonResponse.incompleteData(res, null, 'Required user-id on headers.');
+	}
+
+	if (token === '') {
+		return JsonResponse.incompleteData(res, null, 'Required authorization on headers.');
+	}
+
+	const pbkdf = await redisClient.get(`${userId}-pbkdf`);
+	const hash = await redisClient.get(`${userId}-hash`);
+
+	if (pbkdf === null || hash === null) {
 		res.status(401).json({
 			result: ResponseTypes.invalid,
 			message: 'Unauthorized request. Token invalid or expired'
