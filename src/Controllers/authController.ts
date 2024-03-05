@@ -106,15 +106,15 @@ export const authController = {
 		if (accessToken === null) return JsonResponse.failed1(res, null, 'Generating Access Token returned null');
 
 		const [refreshToken, rtErr] = tryCatch(() => {
-			return jwt.sign({ id: result.id, username, email }, das, { expiresIn: '30d' });
+			return jwt.sign({ id: result.id, username, email }, das, { expiresIn: '10d' });
 		});
 
 		if (rtErr !== null) return JsonResponse.error(res, rtErr);
 
 		if (refreshToken === null) return JsonResponse.failed1(res, null, 'Generating Refresh Token returned null');
 
-		redisClient.setEx(`${result.id}-access-token`, 600, accessToken);
-		redisClient.setEx(`${result.id}-refresh-token`, 2592000, refreshToken);
+		redisClient.setEx(`${result.id}-access-token`, 600, accessToken); //10 minutes
+		redisClient.setEx(`${result.id}-refresh-token`, 864000, refreshToken); //10 days
 
 		return JsonResponse.success(res, {
 			id: result.id,
@@ -138,12 +138,18 @@ export const authController = {
 		}
 	},
 	logout: async (req: Request, res: Response) => {
-		try {
-			JsonResponse.success(res);
-			return;
-		} catch (err) {
-			JsonResponse.failed(res, err);
+		const id = req.headers['user-id']?.toString();
+
+		const [redisAt, redisRt] = await Promise.all([
+			redisClient.del(`${id}-access-token`),
+			redisClient.del(`${id}-refresh-token`)
+		]);
+
+		if (redisAt == 0 || redisRt == 0) {
+			return JsonResponse.failed1(res, null, 'Failed to Logout.');
 		}
+
+		return JsonResponse.success(res, null, 'You are now successfully logged-out');
 	},
 
 	forgot: async (req: Request, res: Response) => {
