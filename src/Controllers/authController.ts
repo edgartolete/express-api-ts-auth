@@ -211,7 +211,7 @@ export const authController = {
 		//TODO: update details like firstname, birthday, photo, etc.
 	},
 	setSecurityQuestions: async (req: Request, res: Response) => {
-		// TODO: update security questions.
+		// TODO: update security questions. trim, removed dashes, and set to lowercase the answers before hashing.
 	},
 	forgotRequest: async (req: Request, res: Response) => {
 		// TODO: return the user security questions and if answer is correct. generate new password and store.
@@ -260,6 +260,7 @@ export const authController = {
 		);
 	},
 	forgotVerify: async (req: Request, res: Response) => {
+		// TODO: verify security questions. trim, removed dashes, and set to lowercase the answers before comparing.
 		return JsonResponse.success(res);
 	},
 	forgotApproved: async (req: Request, res: Response) => {
