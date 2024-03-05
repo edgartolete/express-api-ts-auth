@@ -9,8 +9,18 @@ export type UserCreateType = {
 	password: string;
 };
 
+export type UserFindType = {
+	app: { code: string };
+	username?: string;
+	email?: string;
+	password?: string;
+};
+
 export const userModel = {
 	create: async (user: UserCreateType) => {
 		return await dataSource.createQueryBuilder().insert().into(User).values(user).execute();
+	},
+	find: async (user: UserFindType) => {
+		return await User.findOneBy(user);
 	}
 };
