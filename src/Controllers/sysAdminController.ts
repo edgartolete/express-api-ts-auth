@@ -25,9 +25,6 @@ export const sysAdminController = {
 
 		/** for each user, check if username and password match */
 		for (const user of result) {
-			console.log(username);
-			console.log(password);
-			console.log(user);
 			const usernameMatched = await secure.compare(username, user.username);
 			const passwordMatched = await secure.compare(password, user.password);
 
@@ -45,10 +42,10 @@ export const sysAdminController = {
 				}
 
 				/** if successfully hashed, cache the derived key and the the hashed (username + password) */
-				redisClient.setEx(`${user.id}-pbkdf`, 120, pbkdfResult.key);
+				redisClient.setEx(`${user.id}-pbkdf`, 300, pbkdfResult.key);
 
 				/** you will have 120 seconds to be use the token, if you remain active, expiration will extend */
-				redisClient.setEx(`${user.id}-hash`, 120, hash);
+				redisClient.setEx(`${user.id}-hash`, 300, hash);
 
 				/** use the 64byte generated salt as the token */
 				return JsonResponse.success(res, {

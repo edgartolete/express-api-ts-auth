@@ -94,13 +94,11 @@ export async function sysAdminTokenMiddleware(req: Request, res: Response, next:
 	}
 
 	if (pbkdfResult.key !== pbkdf) {
-		console.log('ttl: pbkdf', await redisClient.ttl('pbkdf'));
-		console.log('ttl: hash', await redisClient.ttl('hash'));
 		return JsonResponse.failed(res, 'Unauthorized request. Token invalid or expired');
 	}
 
-	redisClient.setEx('pbkdf', 120, pbkdf);
-	redisClient.setEx('hash', 120, hash);
+	redisClient.setEx(`${userId}-pbkdf`, 300, pbkdf);
+	redisClient.setEx(`${userId}-hash`, 300, hash);
 
 	next();
 }
