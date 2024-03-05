@@ -7,7 +7,7 @@ console.log('ENVIRONMENT:', process.env.API_ENV);
 
 const PORT = process.env.PORT || 9001;
 
-// secure.hash('ChiliDynamite').then(v => console.log(v));
+// secure.hash('162534').then(v => console.log(v));
 
 app.listen(PORT, () => {
 	console.log(`${Signs.okay} Server running in port: ${PORT}`);

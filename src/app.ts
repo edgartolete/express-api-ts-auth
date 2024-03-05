@@ -70,9 +70,9 @@ app.use(express.json());
 app.use('/apps', sysAdminTokenMiddleware, appsRouter);
 app.use('/:app/auth', appCodeMiddleware, authRouter);
 app.use('/:app/users', appCodeMiddleware, usersRouter);
-app.use('/:app/groups', groupsRouter);
-app.use('/:app/roles', rolesRouter);
-app.use('/:app/*', appCodeMiddleware, notFound);
+app.use('/:app/groups', appCodeMiddleware, groupsRouter);
+app.use('/:app/roles', appCodeMiddleware, rolesRouter);
+app.use('/:app/*', notFound);
 
 /**#### HANDLING ERRORS ##### */
 app.use(errorResponse); // should be used after other middleware and routes

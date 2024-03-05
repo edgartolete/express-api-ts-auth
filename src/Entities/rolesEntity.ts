@@ -10,7 +10,6 @@ import {
 	PrimaryColumn
 } from 'typeorm';
 import { Membership } from './membershipsEntity';
-import { StatusBase } from './base/statusBase';
 import { App } from './appsEntity';
 import { User } from './usersEntity';
 
@@ -18,10 +17,13 @@ import { User } from './usersEntity';
 @Unique(['app', 'name'])
 @Unique(['app', 'code'])
 export class Role extends BaseEntity {
-	@PrimaryColumn({ unique: true, nullable: false })
+	@Column({ nullable: false })
 	code: string;
 
-	@Column()
+	@PrimaryColumn()
+	id: number;
+
+	@Column({ nullable: false })
 	name: string;
 
 	@OneToMany(() => Membership, membership => membership.role)

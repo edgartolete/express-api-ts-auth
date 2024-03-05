@@ -5,13 +5,12 @@ import { Role } from './rolesEntity';
 
 @Entity('apps')
 export class App extends BaseEntity {
-	@PrimaryColumn()
+	@PrimaryColumn({ type: 'bigint' })
+	id: number;
+
+	@Column({ nullable: false, unique: true })
 	@Index()
 	code: string;
-
-	@Column({ nullable: false, type: 'bigint' })
-	@Index()
-	id: number;
 
 	@Column({ nullable: false })
 	name: string;
