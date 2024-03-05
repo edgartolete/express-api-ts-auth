@@ -14,7 +14,7 @@ export const sysAdminController = {
 		}
 
 		/** get all the system administrators */
-		const [result = [], error] = await tryCatchAsync(() => sysAdminModel.get());
+		const [result, error] = await tryCatchAsync(() => sysAdminModel.get());
 
 		if (error !== null) return JsonResponse.failed(res, error);
 

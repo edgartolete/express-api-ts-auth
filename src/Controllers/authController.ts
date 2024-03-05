@@ -10,7 +10,7 @@ export const authController = {
 		// if (req.params.app !== 'main') return res.json({ message: 'not admin' });
 		res.status(200).json({ success: true, app: req.params.app });
 
-		Log.request(req, res);
+		// Log.request(req, res);
 		// search the database if the username or email is taken. do not make entry.
 
 		// do less work here if possible as registering users maybe bot. prioritize filtering the bot.

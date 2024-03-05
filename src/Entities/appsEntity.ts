@@ -9,7 +9,11 @@ export class App extends BaseEntity {
 	@Index()
 	code: string;
 
-	@Column()
+	@Column({ nullable: false, type: 'bigint' })
+	@Index()
+	id: number;
+
+	@Column({ nullable: false })
 	name: string;
 
 	@Column({ type: 'text', nullable: true })

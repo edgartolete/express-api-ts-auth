@@ -8,16 +8,14 @@ import { appsController } from '../Controllers/appsController';
 
 const router: Router = express.Router({ mergeParams: true });
 
-router.get('/', appsController.all);
-
-router.get('/:app', appsController.find);
+router.get('/', appsController.find);
 
 router.post('/create/', appsController.create);
 
-router.patch('/update/:app', appsController.update);
+router.patch('/update/', appsController.update);
 
-router.post('/regenerate/:app', appsController.regenerate);
+router.patch('/regenerate/', appsController.regenerate);
 
-router.delete('/delete/:app', appsController.delete);
+router.delete('/delete/', appsController.delete);
 
 export { router as appsRouter };
