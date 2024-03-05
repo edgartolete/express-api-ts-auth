@@ -1,11 +1,12 @@
 export const mode = {
-	test: process.env.NODE_ENV === 'testing',
-	dev: process.env.NODE_ENV === 'development',
-	prod: process.env.NODE_ENV === 'production'
+	test: process.env.API_ENV === 'test',
+	dev: process.env.API_ENV === 'local',
+	prod: process.env.API_ENV === 'production'
 };
 
 export function getRuntimeConfig() {
 	return {
-		environment: process.env.API_ENV as string
+		environment: process.env.API_ENV as string,
+		apiKey: process.env.API_KEY as string
 	};
 }

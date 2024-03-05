@@ -13,19 +13,6 @@ export const secure = {
 	compare: async (text: string, hash: string) => {
 		return await bcrypt.compare(text, hash);
 	},
-	/**
-    ## Example usage:
-    const password = 'mysecretpassword';
-    generatePBKDF2Key(password)
-        .then((derivedKey) => {
-            console.log('PBKDF2 Key:', derivedKey);
-            return derivedKey;
-        })
-        .catch((err) => {
-            console.error('Error generating PBKDF2 key:', err);
-        });
-    */
-
 	generatePBKDF2Key: (text: string, salt: string = crypto.randomBytes(16).toString('hex')): Promise<PBKDF> => {
 		const iterations = 10000;
 		const keyLength = 64;

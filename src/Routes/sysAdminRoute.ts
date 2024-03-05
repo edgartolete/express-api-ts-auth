@@ -10,9 +10,9 @@ router.all('/ping', (req: Request, res: Response) => {
 
 router.post('/authenticate', sysAdminController.authenticate);
 
-router.post('/update-username', sysAdminTokenMiddleware, sysAdminController.updateUsername);
+router.patch('/update-username', sysAdminTokenMiddleware, sysAdminController.updateUsername);
 
-router.post('/update-password', sysAdminTokenMiddleware, sysAdminController.updatePassword);
+router.patch('/update-password', sysAdminTokenMiddleware, sysAdminController.updatePassword);
 
 router.post('/logout', sysAdminController.logout);
 

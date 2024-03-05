@@ -20,6 +20,7 @@ import { sysAdminTokenMiddleware } from './Middlewares/tokenMiddleware';
 import { startConnections } from './Connections/startConnections';
 import { secure } from './Utils/secure';
 import { Log } from './Connections/mongoDB';
+import { apiKeyMiddleware } from './Middlewares/apiKeyMiddleware';
 
 dotenv.config();
 
@@ -79,7 +80,7 @@ app.use(errorResponse); // should be used after other middleware and routes
 app.get('/', (req, res) => {
 	res.json({ message: 'API is working' });
 });
-app.use('/', sysAdminRouter);
+app.use('/', apiKeyMiddleware, sysAdminRouter);
 
 app.all('*', notFound);
 

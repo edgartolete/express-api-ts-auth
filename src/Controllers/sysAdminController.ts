@@ -13,39 +13,55 @@ export const sysAdminController = {
 			return JsonResponse.incompleteData(res);
 		}
 
-		const [result, error] = await tryCatchAsync(() => sysAdminModel.get());
+		/** get all the system administrators */
+		const [result = [], error] = await tryCatchAsync(() => sysAdminModel.get());
 
-		if (error != null || result == null) return JsonResponse.failed(res, error);
+		if (error !== null) return JsonResponse.failed(res, error);
 
-		if (result[0] === undefined) {
-			return JsonResponse.failed(res, error);
+		/** if the there is no entry then return.  */
+		if (result.length == 0) {
+			return JsonResponse.nothingAffected(res, 'No recorded system administrator.');
 		}
 
-		const usernameMatched = await secure.compare(username, result[0].username);
-		const passwordMatched = await secure.compare(password, result[0].password);
+		/** for each user, check if username and password match */
+		for (const user of result) {
+			const usernameMatched = await secure.compare(username, user.username);
+			const passwordMatched = await secure.compare(password, user.password);
 
-		if (!usernameMatched || !passwordMatched) {
-			return JsonResponse.failed(res, 'Username or Password is incorrect.');
+			if (usernameMatched && passwordMatched) {
+				/** if found, hash the username and password to create a pbkdf */
+				const hash = await secure.hash(username + password);
+				const salt = secure.salt(64);
+
+				/** store the user id for updating purpose */
+				
+
+				const [pbkdfResult, pbkdfError] = await tryCatchAsync(() => secure.generatePBKDF2Key(hash, salt));
+
+				if (pbkdfError != null || pbkdfResult == null) {
+					return JsonResponse.failed(res, pbkdfError);
+				}
+
+				/** if successfully hashed, cache the derived key and the the hashed (username + password) */
+				redisClient.setEx('pbkdf', 120, pbkdfResult.key);
+
+				/** you will have 120 seconds to be use the token, if you remain active, expiration will extend */
+				redisClient.setEx('hash', 120, hash);
+
+				/** use the 64byte generated salt as the token */
+				return JsonResponse.success(res, {
+					token: salt
+				});
+			}
 		}
 
-		const hash = await secure.hash(username + password);
-
-		const salt = secure.salt(64);
-
-		const [pbkdfResult, pbkdfError] = await tryCatchAsync(() => secure.generatePBKDF2Key(hash, salt));
-
-		if (pbkdfError != null || pbkdfResult == null) {
-			return JsonResponse.failed(res, pbkdfError);
-		}
-
-		redisClient.setEx('pbkdf', 120, pbkdfResult.key);
-		redisClient.setEx('hash', 120, hash);
-
-		return JsonResponse.success(res, {
-			token: salt
-		});
+		/** if user input did not match any of the user, return. */
+		return JsonResponse.failed(res, 'Username or Password is incorrect.');
 	},
 	updateUsername: async (req: Request, res: Response) => {
+		console.log(req.body);
+
+
 		return JsonResponse.success(res);
 	},
 	updatePassword: async (req: Request, res: Response) => {

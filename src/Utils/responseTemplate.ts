@@ -2,12 +2,12 @@ import { Response } from 'express';
 import { ResponseTypes } from './constants';
 
 export const JsonResponse = {
-	incompleteData: (res: Response) => {
+	incompleteData: (res: Response, content: any = null, message: string | null = null) => {
 		res.status(422);
 		res.json({
 			result: ResponseTypes.invalid,
-			message: 'One or more required information is missing from the request',
-			content: 'No Content.'
+			message: message ?? 'One or more required information is missing from the request',
+			content: content ?? 'No Content.'
 		});
 	},
 	success: (res: Response, content: any = 'No Content.', message: string | null = null) => {
