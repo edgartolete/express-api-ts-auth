@@ -166,15 +166,32 @@ export const authController = {
 		return JsonResponse.success(res, { accessToken }, 'Refresh Token Success');
 	},
 	logout: async (req: Request, res: Response) => {
-		const id = req.headers['user-id']?.toString() ?? '';
+		const id = parseInt(req.headers['user-id']?.toString() as string);
+
+		if (id === undefined) {
+			return JsonResponse.failed1(res, null, 'Required user-id');
+		}
+
+		const { app: appCode } = req.params;
+		const user: UserFindType = { id, app: { code: appCode } };
+
+		const [result, findErr] = await tryCatchAsync(() => userModel.find(user));
+
+		if (findErr !== null) {
+			return JsonResponse.error(res, findErr);
+		}
+
+		if (result === null) {
+			return JsonResponse.failed1(res, null, 'User Not found');
+		}
 
 		const [redisAt, redisRt] = await Promise.all([
 			redisClient.del(`${id}-access-token`),
 			redisClient.del(`${id}-refresh-token`)
 		]);
 
-		if (redisAt == 0 || redisRt == 0) {
-			return JsonResponse.failed1(res, null, 'Failed to Logout.');
+		if (redisAt == 0 && redisRt == 0) {
+			return JsonResponse.failed1(res, null, 'You are already logged-out');
 		}
 
 		return JsonResponse.success(res, null, 'You are now successfully logged-out');

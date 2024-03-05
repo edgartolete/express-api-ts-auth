@@ -10,6 +10,7 @@ export type UserCreateType = {
 };
 
 export type UserFindType = {
+	id?: number;
 	app: { code: string };
 	username?: string;
 	email?: string;
