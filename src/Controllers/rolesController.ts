@@ -10,14 +10,6 @@ export const rolesController = {
 			JsonResponse.failed(res, err);
 		}
 	},
-	find: async (req: Request, res: Response) => {
-		try {
-			JsonResponse.success(res);
-			return;
-		} catch (err) {
-			JsonResponse.failed(res, err);
-		}
-	},
 	create: async (req: Request, res: Response) => {
 		try {
 			JsonResponse.success(res);
