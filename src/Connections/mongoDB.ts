@@ -18,7 +18,7 @@ export async function initializeMongoDB() {
 		console.log(`${Signs.okay} Connected to MongoDB.`);
 	} else {
 		console.log(
-			`${Signs.error} Mongo Connection State: ${getMongoDBConnectionState(mongoose.connection.readyState)}`
+			`${Signs.error} MongoDB Connection State: ${getMongoDBConnectionState(mongoose.connection.readyState)}`
 		);
 	}
 }

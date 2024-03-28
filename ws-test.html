@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>WebSocket Example</title>
+	</head>
+	<body>
+		<h1>WebSocket Example</h1>
+		<form id="messageForm">
+			<input type="text" id="messageInput" placeholder="Type a message" />
+			<button type="button" id="sendMessageButton">Send Message</button>
+		</form>
+		<div id="messages"></div>
+
+		<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+		<script>
+			const socket = io('ws://localhost:3001', {
+				transports: ['websocket']
+			});
+
+			socket.on('connect', () => {
+				console.log('Connected to server');
+			});
+
+			socket.on('receive-message', data => {
+				console.log('Received message:', data);
+				displayMessage(data);
+			});
+
+			function displayMessage(message) {
+				const messagesElement = document.getElementById('messages');
+				const pElement = document.createElement('p');
+				pElement.textContent = message;
+				messagesElement.appendChild(pElement);
+			}
+
+			function sendMessage() {
+				const message = document.getElementById('messageInput').value;
+				socket.emit('send-message', message);
+			}
+
+			document.getElementById('messageForm').addEventListener('submit', event => {
+				event.preventDefault();
+				sendMessage();
+			});
+		</script>
+	</body>
+</html>

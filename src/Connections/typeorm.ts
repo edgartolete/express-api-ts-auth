@@ -34,55 +34,55 @@ const localConnection = {
 	migrations: []
 } as DataSourceOptions;
 
-const testConnection = {
-	type: 'postgres',
-	host: process.env.TEST_DB_HOST,
-	username: process.env.TEST_DB_USER,
-	password: process.env.TEST_DB_PASS,
-	database: process.env.TEST_DB_NAME,
-	port: process.env.TEST_DB_PORT,
-	ssl: true,
-	extra: {
-		ssl: {
-			rejectUnauthorized: false
-		}
-	},
-	connection: {
-		options: `project=${process.env.TEST_DB_ENDPOINT}`
-	},
-	logging: false,
-	poolSize: 10,
-	dropSchema: false,
-	synchronize: true,
-	entities: [App, SysAdmin, User, Group, Role, Membership],
-	migrations: []
-} as DataSourceOptions;
+// const testConnection = {
+// 	type: 'postgres',
+// 	host: process.env.TEST_DB_HOST,
+// 	username: process.env.TEST_DB_USER,
+// 	password: process.env.TEST_DB_PASS,
+// 	database: process.env.TEST_DB_NAME,
+// 	port: process.env.TEST_DB_PORT,
+// 	ssl: true,
+// 	extra: {
+// 		ssl: {
+// 			rejectUnauthorized: false
+// 		}
+// 	},
+// 	connection: {
+// 		options: `project=${process.env.TEST_DB_ENDPOINT}`
+// 	},
+// 	logging: false,
+// 	poolSize: 10,
+// 	dropSchema: false,
+// 	synchronize: true,
+// 	entities: [App, SysAdmin, User, Group, Role, Membership],
+// 	migrations: []
+// } as DataSourceOptions;
 
-const prodConnection = {
-	type: 'mysql',
-	host: process.env.PROD_DB_HOST,
-	username: process.env.PROD_DB_USER,
-	password: process.env.PROD_DB_PASS,
-	database: process.env.PROD_DB_NAME,
-	port: process.env.PROD_DB_PORT,
-	logging: false,
-	poolSize: 10,
-	dropSchema: false,
-	synchronize: false, // do not set to true, use migration instead
-	entities: [App, SysAdmin, User, Group, Role, Membership],
-	migrations: [
-		// 'dist/database/migrations/1696156148740-generate.js', // added users
-	]
-} as DataSourceOptions;
+// const prodConnection = {
+// 	type: 'mysql',
+// 	host: process.env.PROD_DB_HOST,
+// 	username: process.env.PROD_DB_USER,
+// 	password: process.env.PROD_DB_PASS,
+// 	database: process.env.PROD_DB_NAME,
+// 	port: process.env.PROD_DB_PORT,
+// 	logging: false,
+// 	poolSize: 10,
+// 	dropSchema: false,
+// 	synchronize: false, // do not set to true, use migration instead
+// 	entities: [App, SysAdmin, User, Group, Role, Membership],
+// 	migrations: [
+// 		// 'dist/database/migrations/1696156148740-generate.js', // added users
+// 	]
+// } as DataSourceOptions;
 
-const connection: DataSourceOptions =
-	{
-		local: localConnection,
-		test: testConnection,
-		production: prodConnection
-	}[environment] ?? localConnection;
+// const connection: DataSourceOptions =
+// 	{
+// 		local: localConnection,
+// 		test: testConnection,
+// 		production: prodConnection
+// 	}[environment] ?? localConnection;
 
-export const dataSource = new DataSource(connection);
+export const dataSource = new DataSource(localConnection);
 
 export function initializeTypeORM() {
 	dataSource
